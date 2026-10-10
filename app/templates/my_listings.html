@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-3">My Listings</h3>
+<table class="table table-striped bg-white">
+  <thead>
+    <tr><th>Food</th><th>Qty (kg)</th><th>Expires</th><th>Status</th><th>Claimed by</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for item in items %}
+    <tr>
+      <td>{{ item.title }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.expiry_time.strftime('%d %b, %I:%M %p') }}</td>
+      <td><span class="badge bg-secondary">{{ item.status }}</span></td>
+      <td>
+        {% if item.claim %}
+          {{ item.claim.ngo.name }}<br>
+          {% if item.claim.ngo.phone %}
+            <a href="tel:{{ item.claim.ngo.phone }}">📞 {{ item.claim.ngo.phone }}</a>
+          {% else %}
+            <span class="text-muted small">No phone provided</span>
+          {% endif %}
+        {% else %}-{% endif %}
+      </td>
+      <td>
+        {% if item.status == 'available' %}
+        <form method="POST" action="{{ url_for('main.cancel_listing', listing_id=item.id) }}"
+              onsubmit="return confirm('Cancel this listing?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline-danger">Cancel</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="text-muted">You haven't posted anything yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

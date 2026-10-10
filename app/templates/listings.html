@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-3">Available Food</h3>
+
+{% if not items %}
+  <p class="text-muted">No food available right now. Please check back soon.</p>
+{% endif %}
+
+<div class="row">
+  {% for item in items %}
+  <div class="col-md-4 mb-3">
+    <div class="card h-100 shadow-sm">
+
+      {% if item.has_image %}
+      <img src="{{ url_for('main.food_image', listing_id=item.id) }}"
+           class="card-img-top" style="height:180px;object-fit:cover" alt="{{ item.title }}">
+      {% endif %}
+
+      <div class="card-body">
+        <h5 class="card-title">{{ item.title }}</h5>
+        <p class="mb-1"><strong>{{ item.quantity }} kg</strong></p>
+        <p class="mb-1">📍 {{ item.pickup_address }}</p>
+        <p class="mb-1">⏰ Expires: {{ item.expiry_time.strftime('%d %b, %I:%M %p') }}</p>
+
+        {% if item.latitude is not none %}
+        <p class="mb-1">
+          <a href="https://www.openstreetmap.org/?mlat={{ item.latitude }}&mlon={{ item.longitude }}#map=17/{{ item.latitude }}/{{ item.longitude }}"
+             target="_blank" rel="noopener">🗺️ View on map</a>
+        </p>
+        {% endif %}
+
+        <p class="text-muted small">Donor: {{ item.donor.name }}</p>
+      </div>
+
+      {% if current_user.role == 'ngo' %}
+      <div class="card-footer bg-white">
+        <form method="POST" action="{{ url_for('main.claim', listing_id=item.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-success w-100">Claim</button>
+        </form>
+      </div>
+      {% elif current_user.role == 'donor' %}
+      <div class="card-footer bg-white text-muted small">Only NGOs can claim food.</div>
+      {% endif %}
+
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

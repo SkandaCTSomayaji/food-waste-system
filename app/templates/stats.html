@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-4">Impact Dashboard</h3>
+
+<div class="row text-center">
+  <div class="col-md-3 mb-3"><div class="card shadow-sm"><div class="card-body">
+    <h2>{{ donors }}</h2><p class="text-muted mb-0">Donors</p></div></div></div>
+  <div class="col-md-3 mb-3"><div class="card shadow-sm"><div class="card-body">
+    <h2>{{ ngos }}</h2><p class="text-muted mb-0">NGOs</p></div></div></div>
+  <div class="col-md-3 mb-3"><div class="card shadow-sm"><div class="card-body">
+    <h2>{{ listings }}</h2><p class="text-muted mb-0">Total listings</p></div></div></div>
+  <div class="col-md-3 mb-3"><div class="card shadow-sm border-success"><div class="card-body">
+    <h2 class="text-success">{{ saved }} kg</h2><p class="text-muted mb-0">Food saved (claimed)</p></div></div></div>
+</div>
+
+<div class="row text-center">
+  <div class="col-md-6 mb-3"><div class="card shadow-sm"><div class="card-body">
+    <h2>{{ collected }} kg</h2><p class="text-muted mb-0">Actually collected</p></div></div></div>
+  <div class="col-md-6 mb-3"><div class="card shadow-sm border-danger"><div class="card-body">
+    <h2 class="text-danger">{{ expired }} kg</h2><p class="text-muted mb-0">Wasted (expired unclaimed)</p></div></div></div>
+</div>
+{% endblock %}

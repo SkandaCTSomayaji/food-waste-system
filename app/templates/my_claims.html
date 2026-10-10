@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-3">My Claims</h3>
+<table class="table table-striped bg-white">
+  <thead>
+    <tr><th>Food</th><th>Qty (kg)</th><th>Pickup address</th><th>Donor contact</th><th>Expires</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for c in claims %}
+    <tr>
+      <td>{{ c.listing.title }}</td>
+      <td>{{ c.listing.quantity }}</td>
+      <td>
+        {{ c.listing.pickup_address }}
+        {% if c.listing.latitude is not none %}
+          <br>
+          <a href="https://www.openstreetmap.org/?mlat={{ c.listing.latitude }}&mlon={{ c.listing.longitude }}#map=17/{{ c.listing.latitude }}/{{ c.listing.longitude }}"
+             target="_blank" rel="noopener">🗺️ Map</a>
+        {% endif %}
+      </td>
+      <td>
+        {{ c.listing.donor.name }}<br>
+        {% if c.listing.donor.phone %}
+          <a href="tel:{{ c.listing.donor.phone }}">📞 {{ c.listing.donor.phone }}</a>
+        {% else %}
+          <span class="text-muted small">No phone provided</span>
+        {% endif %}
+      </td>
+      <td>{{ c.listing.expiry_time.strftime('%d %b, %I:%M %p') }}</td>
+      <td><span class="badge bg-secondary">{{ c.listing.status }}</span></td>
+      <td>
+        {% if c.listing.status == 'claimed' %}
+        <form method="POST" action="{{ url_for('main.collected', listing_id=c.listing.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-primary">Mark Collected</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" class="text-muted">You haven't claimed anything yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="mb-3">My Profile</h3>
+
+        <p class="mb-1"><strong>Name:</strong> {{ current_user.name }}</p>
+        <p class="mb-1"><strong>Email:</strong> {{ current_user.email }}</p>
+        <p class="mb-3"><strong>Role:</strong>
+          <span class="badge bg-success">{{ current_user.role }}</span>
+        </p>
+
+        <hr>
+        <h6>Contact number</h6>
+
+        <!-- View mode: shown when a phone is already saved -->
+        <div id="phoneView" {% if not current_user.phone %}class="d-none"{% endif %}>
+          <p class="fs-5 mb-2">📞 {{ current_user.phone }}</p>
+          <button type="button" class="btn btn-outline-success btn-sm" id="editBtn">Edit</button>
+        </div>
+
+        <!-- Edit mode: shown right away only if no phone is saved yet -->
+        <form method="POST" id="phoneForm" {% if current_user.phone %}class="d-none"{% endif %}>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input class="form-control mb-2" type="tel" name="phone" id="phoneInput"
+                 value="{{ current_user.phone or '' }}" placeholder="e.g. 9876543210" required>
+          <div class="d-flex gap-2">
+            <button class="btn btn-success btn-sm">Save</button>
+            {% if current_user.phone %}
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="cancelBtn">Cancel</button>
+            {% endif %}
+          </div>
+        </form>
+
+        <small class="text-muted d-block mt-3">
+          Shared only with the donor or NGO you are matched with.
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const view = document.getElementById('phoneView');
+  const form = document.getElementById('phoneForm');
+  const input = document.getElementById('phoneInput');
+  const editBtn = document.getElementById('editBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      view.classList.add('d-none');
+      form.classList.remove('d-none');
+      input.focus();
+    });
+  }
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      form.classList.add('d-none');
+      view.classList.remove('d-none');
+    });
+  }
+</script>
+{% endblock %}
